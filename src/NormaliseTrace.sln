@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NormalisedTraces", "NormalisedTraces.csproj", "{955B11F1-B79D-4392-9A0B-366FB1CEE470}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NormaliseTrace", "NormaliseTrace.csproj", "{955B11F1-B79D-4392-9A0B-366FB1CEE470}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
