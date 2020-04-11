@@ -7,29 +7,31 @@ namespace NormaliseTrace
 {
     public interface IFileReader
     {
-        List<List<int>> ParseFolders(IEnumerable<string> searchPatterns);
+        List<List<int>> ParseFolders(IEnumerable<string> directoryAndSearchPatterns);
         List<List<int>> ParseFiles(IEnumerable<string> files);
         IEnumerable<List<int>> ParseFile(string file);
     }
 
     public class FileReader : IFileReader
     {
-        public List<List<int>> ParseFolders(IEnumerable<string> searchPatterns)
+        public List<List<int>> ParseFolders(IEnumerable<string> directoryAndSearchPatterns)
         {
-            if (searchPatterns == null)
-                throw new ArgumentNullException(nameof(searchPatterns));
+            if (directoryAndSearchPatterns == null)
+                throw new ArgumentNullException(nameof(directoryAndSearchPatterns));
 
             var traceValues = new List<List<int>>();
-            foreach (var searchPattern in searchPatterns)
+            foreach (var directoryAndSearchPattern in directoryAndSearchPatterns)
             {
-                if(File.Exists(searchPattern))
+                if(File.Exists(directoryAndSearchPattern))
                 {
                     // This is not a directory search patter, but a single file to read
-                    traceValues.AddRange(ParseFile(searchPattern));
+                    traceValues.AddRange(ParseFile(directoryAndSearchPattern));
                 }
                 else
                 {
-                    var files = Directory.EnumerateFiles(searchPattern);
+                    var path          = Path.GetDirectoryName(directoryAndSearchPattern);
+                    var searchPattern = Path.GetFileName(directoryAndSearchPattern);
+                    var files         = Directory.EnumerateFiles(path, searchPattern);
                     traceValues.AddRange(ParseFiles(files));
                 }
             }

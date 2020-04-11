@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CommandLine;
 using CommandLine.Text;
@@ -42,6 +43,7 @@ namespace NormaliseTrace
             if (o.GoodFiles.Any())
             {
                 var goodData = fileReader.ParseFolders(o.GoodFiles);
+                Console.WriteLine($"Number of lines read in: {goodData.Count}");
             }
         }
 
