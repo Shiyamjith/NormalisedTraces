@@ -1,22 +1,60 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CommandLine;
+using CommandLine.Text;
 
 namespace NormaliseTrace
 {
     class Program
     {
+        public static bool HaveError;
+
         static void Main(string[] args)
         {
-            if(args.Length < 2)
+            var result = Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(RunOptions)
+                .WithNotParsed(HandleParseError);
+
+            if (HaveError)
             {
+                var helpText = HelpText.AutoBuild(result, h => HelpText.DefaultParsingErrorsHandler(result, h), e => e);
+                Console.WriteLine(helpText);
                 ShowHelp();
+            }
+        }
+
+        static void RunOptions(Options o)
+        {
+            if(!o.TraceFiles.Any() && !string.IsNullOrWhiteSpace(o.OutputFolder))
+            {
+                HaveError = true;
                 return;
             }
+
+            if(o.TraceFiles.Any() && string.IsNullOrWhiteSpace(o.OutputFolder))
+            {
+                HaveError = true;
+                return;
+            }
+
+            var fileReader = new FileReader();
+            if (o.GoodFiles.Any())
+            {
+                var goodData = fileReader.ParseSearchPattern(o.GoodFiles);
+            }
+        }
+
+        static void HandleParseError(IEnumerable<Error> errs)
+        {
+            HaveError = true;
         }
 
         private static void ShowHelp()
         {
             Console.WriteLine("This application normalises traces.");
-            Console.WriteLine("NormaliseTrace <command> [filename]");
+            Console.WriteLine("Source code and documentation over on GitHub");
+            Console.WriteLine("https://github.com/Shiyamjith/NormalisedTraces");
             Console.WriteLine();
             Console.WriteLine("Instructions for use:");
             Console.WriteLine("1. When a new detector has been installed, run an alpha trace on it to obtain a 'good' trace.");
@@ -29,22 +67,6 @@ namespace NormaliseTrace
             Console.WriteLine("   Run this application using the -n|-normalise parameter and passing the filename of the trace to be normalised.");
             Console.WriteLine("   Also specify the -o|-output parameter passing in the name of the folder to write output to.");
             Console.WriteLine();
-            Console.WriteLine("Available commands:");
-            Console.WriteLine();
-            Console.WriteLine("-g   Reads in a good alpha trace file and stores it as the new reference trace.");
-            Console.WriteLine("     Use this only when the detector is quite new.");
-            Console.WriteLine();
-            Console.WriteLine("-b   Reads in a bad alpha trace file and calculates a delta file to use to normalise traces.");
-            Console.WriteLine("     Ideally do this every day, or at least once a week.");
-            Console.WriteLine();
-            Console.WriteLine("-n   The trace file to be normalised. Also specify the -o parameter.");
-            Console.WriteLine();
-            Console.WriteLine("-o   The output folder to write the normalised traces. If an output file already exists, it will be overwritten.");
-            Console.WriteLine();
-            Console.WriteLine("Example:");
-            Console.WriteLine("NormaliseTrace -g c:\\traces\\good\\R3_Strip*.csv");
-            Console.WriteLine("NormaliseTrace -b c:\\traces\\bad\\R3_Strip*.csv");
-            Console.WriteLine("NormaliseTrace -n c:\\traces\\March07\\Sham*.csv -o c:\\traces\\March07\\Output");
         }
     }
 }
