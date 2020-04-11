@@ -41,7 +41,7 @@ namespace NormaliseTrace
             var fileReader = new FileReader();
             if (o.GoodFiles.Any())
             {
-                var goodData = fileReader.ParseSearchPattern(o.GoodFiles);
+                var goodData = fileReader.ParseFolders(o.GoodFiles);
             }
         }
 

@@ -7,12 +7,14 @@ namespace NormaliseTrace
 {
     public interface IFileReader
     {
-        List<List<int>> ParseSearchPattern(IEnumerable<string> searchPatterns);
+        List<List<int>> ParseFolders(IEnumerable<string> searchPatterns);
+        List<List<int>> ParseFiles(IEnumerable<string> files);
+        IEnumerable<List<int>> ParseFile(string file);
     }
 
     public class FileReader : IFileReader
     {
-        public List<List<int>> ParseSearchPattern(IEnumerable<string> searchPatterns)
+        public List<List<int>> ParseFolders(IEnumerable<string> searchPatterns)
         {
             if (searchPatterns == null)
                 throw new ArgumentNullException(nameof(searchPatterns));
@@ -20,8 +22,16 @@ namespace NormaliseTrace
             var traceValues = new List<List<int>>();
             foreach (var searchPattern in searchPatterns)
             {
-                var files = Directory.EnumerateFiles(searchPattern);
-                traceValues.AddRange(ParseFiles(files));
+                if(File.Exists(searchPattern))
+                {
+                    // This is not a directory search patter, but a single file to read
+                    traceValues.AddRange(ParseFile(searchPattern));
+                }
+                else
+                {
+                    var files = Directory.EnumerateFiles(searchPattern);
+                    traceValues.AddRange(ParseFiles(files));
+                }
             }
 
             return traceValues;
@@ -34,15 +44,16 @@ namespace NormaliseTrace
 
             var traceValues = new List<List<int>>();
             foreach (var file in files)
-            {
-                traceValues.AddRange(
-                    File.ReadLines(file)
-                    .Select(line => line.Split(','))
-                    .Select(values => values.Select(int.Parse).ToList())
-                );
-            }
+                traceValues.AddRange(ParseFile(file));
 
             return traceValues;
+        }
+
+        public IEnumerable<List<int>> ParseFile(string file)
+        {
+            return File.ReadLines(file)
+                .Select(line => line.Split(','))
+                .Select(values => values.Select(int.Parse).ToList());
         }
     }
 }
