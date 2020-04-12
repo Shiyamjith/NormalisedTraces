@@ -42,8 +42,8 @@ namespace NormaliseTrace
             var fileReader = new FileReader();
             if (o.GoodFiles.Any())
             {
-                var goodData = fileReader.ParseFolders(o.GoodFiles);
-                Console.WriteLine($"Number of lines read in: {goodData.Count}");
+                var data = fileReader.ParseFolders(o.GoodFiles);
+                Console.WriteLine($"Number of lines read in: {data.Count}");
             }
         }
 
