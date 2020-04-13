@@ -43,8 +43,23 @@ namespace NormaliseTrace
             if (o.GoodFiles.Any())
             {
                 var data = fileReader.ParseFolders(o.GoodFiles);
-                Console.WriteLine($"Number of lines read in: {data.Count}");
+                var result = AverageColumns(data);
+                // TODO: Save result in a file
             }
+        }
+
+        private static List<int> AverageColumns(List<List<int>> data)
+        {
+            Console.WriteLine($"Number of lines read in: {data.Count}");
+            var transposedData = TraceHelper.Transpose(data);
+            var result = new List<int>();
+            // Because the data has been rotated, we iterate the rows, which are in fact columns
+            foreach (var column in transposedData)
+            {
+                result.Add(TraceHelper.AverageCentre(column));
+            }
+
+            return result;
         }
 
         static void HandleParseError(IEnumerable<Error> errs)
