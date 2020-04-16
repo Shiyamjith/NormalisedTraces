@@ -6,6 +6,9 @@ namespace NormaliseTrace
 {
     public class Options
     {
+        [Option('p', "percent", Group = "Options", Required = false, HelpText = "Percentage (1 to 99) of the data to keep. Defaults to keep centre 50% if not specified.")]
+        public int PercentageToKeep { get; set; }
+
         [Option('g', "good", Group = "Options", Required = false, HelpText = "Reads in a good alpha trace files and stores it as the new reference trace. Use this only when the detector is quite new.")]
         public IEnumerable<string> GoodFiles { get; set; }
 

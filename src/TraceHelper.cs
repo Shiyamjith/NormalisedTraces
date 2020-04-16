@@ -18,7 +18,7 @@ namespace NormaliseTrace
 
         // Sort column into order, then throw away top and bottom 25%.
         // Returning an average of the centre 50%
-        public static int AverageCentre(List<int> data)
+        public static int AverageCentre(List<int> data, int percentageToKeep)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
@@ -28,11 +28,14 @@ namespace NormaliseTrace
             var count = data.Count;
             if (count == 1)
                 return data[0];
+
             if (count == 2)
                 return (int) Math.Round(data.Average());
 
-            var skip = (int) Math.Round(count * 0.25);
-            var take = (int) Math.Round(count * 0.50);
+            var takePercentage = percentageToKeep / 100.0;
+            var skipPercentage = (1.0 - takePercentage) * 0.5;
+            var skip = (int) Math.Round(count * skipPercentage);
+            var take = (int) Math.Round(count * takePercentage);
 
             if (count == 3)
             {
@@ -42,6 +45,8 @@ namespace NormaliseTrace
 
             if (take < 1)
                 take = 1;
+
+            Console.WriteLine($"Skip {skip} Take {take}");
 
             var average = data
                 .Skip(skip)

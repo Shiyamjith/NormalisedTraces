@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using CommandLine;
 using CommandLine.Text;
@@ -27,6 +26,12 @@ namespace NormaliseTrace
 
         static void RunOptions(Options o)
         {
+            if (o.PercentageToKeep < 1)
+                o.PercentageToKeep = 1;
+            
+            if (o.PercentageToKeep > 99)
+                o.PercentageToKeep = 99;
+
             if(!o.TraceFiles.Any() && !string.IsNullOrWhiteSpace(o.OutputFolder))
             {
                 HaveError = true;
@@ -43,12 +48,12 @@ namespace NormaliseTrace
             if (o.GoodFiles.Any())
             {
                 var data = fileReader.ParseFolders(o.GoodFiles);
-                var result = AverageColumns(data);
+                var result = AverageColumns(data, o.PercentageToKeep);
                 // TODO: Save result in a file
             }
         }
 
-        private static List<int> AverageColumns(List<List<int>> data)
+        private static List<int> AverageColumns(List<List<int>> data, int percentageToKeep)
         {
             Console.WriteLine($"Number of lines read in: {data.Count}");
             var transposedData = TraceHelper.Transpose(data);
@@ -56,7 +61,7 @@ namespace NormaliseTrace
             // Because the data has been rotated, we iterate the rows, which are in fact columns
             foreach (var column in transposedData)
             {
-                result.Add(TraceHelper.AverageCentre(column));
+                result.Add(TraceHelper.AverageCentre(column, percentageToKeep));
             }
 
             return result;
