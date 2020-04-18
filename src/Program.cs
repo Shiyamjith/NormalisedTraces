@@ -32,35 +32,36 @@ namespace NormaliseTrace
             if(HaveError)
                 return;
 
-            var fileReader = new FileReader(new FileReaderStrategy());
-            var fileWriter = new FileWriter();
+            var fileReaderStrategy = new FileReaderStrategy();
+            var alphaFileReader    = new AlphaFileReader(fileReaderStrategy);
+            var alphaFileWriter    = new AlphaFileWriter();
 
             if (o.GoodFiles.Any())
             {
                 Console.WriteLine();
                 Console.WriteLine("Reading good trace files");
-                var data = fileReader.ParseFolders(o.GoodFiles);
+                var data = alphaFileReader.ParseFolders(o.GoodFiles);
                 var result = TraceHelper.AverageColumns(data, o.PercentageToKeep);
-                fileWriter.WriteGoodFile(result);
+                alphaFileWriter.WriteGoodFile(result);
             }
 
             if (o.BadFiles.Any())
             {
                 Console.WriteLine();
                 Console.WriteLine("Reading bad trace files");
-                var data = fileReader.ParseFolders(o.BadFiles);
+                var data = alphaFileReader.ParseFolders(o.BadFiles);
                 var result = TraceHelper.AverageColumns(data, o.PercentageToKeep);
-                fileWriter.WriteBadFile(result);
+                alphaFileWriter.WriteBadFile(result);
 
                 Console.WriteLine();
                 Console.WriteLine("Read in good trace file to calculate delta");
-                var good = fileReader.ReadGoodFile();
+                var good = alphaFileReader.ReadGoodFile();
                 if (good != null)
                 {
                     var calculateDelta = new CalculateDelta();
                     var delta = calculateDelta.Calculate(o.Columns, good.ToList(), result);
                     if(delta != null)
-                        fileWriter.WriteDeltaFile(delta);
+                        alphaFileWriter.WriteDeltaFile(delta);
                 }
             }
 
@@ -68,8 +69,9 @@ namespace NormaliseTrace
             {
                 Console.WriteLine();
                 Console.WriteLine("Reading trace files");
-                var data = fileReader.ParseFolders(o.BadFiles);
-
+                var delta            = alphaFileReader.ReadDeltaFile();
+                var processTraceFile = new ProcessTraceFile(fileReaderStrategy, o.Columns, delta);
+                processTraceFile.Process(o.OutputFolder, o.TraceFiles);
             }
         }
 

@@ -5,18 +5,18 @@ using System.Linq;
 
 namespace NormaliseTrace.Application
 {
-    public class FileReader : IFileReader
+    public class AlphaFileReader : IAlphaFileReader
     {
         private readonly IReaderStrategy _reader;
 
-        public FileReader(IReaderStrategy reader)
+        public AlphaFileReader(IReaderStrategy reader)
         {
             _reader = reader;
         }
 
         public List<List<int>> ParseFolders(IEnumerable<string> directoryAndSearchPatterns)
         {
-            Console.WriteLine("Reading files:");
+            Console.WriteLine("Reading alpha files:");
             if (directoryAndSearchPatterns == null)
                 throw new ArgumentNullException(nameof(directoryAndSearchPatterns));
 
@@ -65,7 +65,7 @@ namespace NormaliseTrace.Application
             var result = _reader.ReadInput(filename);
             if (!result.success)
             {
-                Console.WriteLine($"Unable to read in good file {filename}");
+                Console.WriteLine($"Unable to read in good alpha file {filename}");
                 return null;
             }
 

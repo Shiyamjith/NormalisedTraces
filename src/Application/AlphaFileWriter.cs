@@ -4,7 +4,7 @@ using System.IO;
 
 namespace NormaliseTrace.Application
 {
-    public class FileWriter : IFileWriter
+    public class AlphaFileWriter : IFileWriter
     {
         public void WriteGoodFile(List<int> data)
         {

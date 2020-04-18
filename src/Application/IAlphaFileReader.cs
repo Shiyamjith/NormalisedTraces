@@ -2,7 +2,7 @@
 
 namespace NormaliseTrace.Application
 {
-    public interface IFileReader
+    public interface IAlphaFileReader
     {
         List<List<int>> ParseFolders(IEnumerable<string> directoryAndSearchPatterns);
         List<List<int>> ReadFiles(IEnumerable<string> files);
