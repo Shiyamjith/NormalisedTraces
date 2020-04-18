@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using CommandLine;
 using CommandLine.Text;
+using NormaliseTrace.Application;
+using NormaliseTrace.Infrastructure;
 
 namespace NormaliseTrace
 {
-    class Program
+    internal class Program
     {
         public static bool HaveError;
 
@@ -26,6 +28,9 @@ namespace NormaliseTrace
 
         static void RunOptions(Options o)
         {
+            if (o.PercentageToKeep == 0)
+                o.PercentageToKeep = 50; // default
+
             if (o.PercentageToKeep < 1)
                 o.PercentageToKeep = 1;
             
@@ -44,12 +49,36 @@ namespace NormaliseTrace
                 return;
             }
 
-            var fileReader = new FileReader();
+            var fileReader = new FileReader(new FileReaderStrategy());
+            var fileWriter = new FileWriter();
+
             if (o.GoodFiles.Any())
             {
+                Console.WriteLine();
+                Console.WriteLine("Reading good trace files");
                 var data = fileReader.ParseFolders(o.GoodFiles);
                 var result = AverageColumns(data, o.PercentageToKeep);
-                // TODO: Save result in a file
+                fileWriter.WriteGoodFile(result);
+            }
+
+            if (o.BadFiles.Any())
+            {
+                Console.WriteLine();
+                Console.WriteLine("Reading bad trace files");
+                var data = fileReader.ParseFolders(o.BadFiles);
+                var result = AverageColumns(data, o.PercentageToKeep);
+                fileWriter.WriteBadFile(result);
+
+                Console.WriteLine();
+                Console.WriteLine("Read in good trace file to calculate delta");
+                var good = fileReader.ReadGoodFile();
+                if (good != null)
+                {
+                    var calculateDelta = new CalculateDelta();
+                    var delta = calculateDelta.Calculate(good, result);
+                    if(delta != null)
+                        fileWriter.WriteDeltaFile(delta);
+                }
             }
         }
 

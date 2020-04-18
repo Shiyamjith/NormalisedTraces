@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace NormaliseTrace
@@ -46,7 +47,7 @@ namespace NormaliseTrace
             if (take < 1)
                 take = 1;
 
-            Console.WriteLine($"Skip {skip} Take {take}");
+            //Console.WriteLine($"Skip {skip} Take {take}");
 
             var average = data
                 .Skip(skip)
@@ -54,6 +55,12 @@ namespace NormaliseTrace
                 .Average();
 
             return (int) Math.Round(average);
+        }
+
+        public static string GetCurrentFolder()
+        {
+            var path = System.Reflection.Assembly.GetEntryAssembly()?.Location;
+            return Path.GetDirectoryName(path);
         }
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "NormaliseTrace": {
       "commandName": "Project",
-      "commandLineArgs": "-g \"C:\\S\\Source (open source)\\NormalisedTraces\\Example Traces\\Good Traces\\*.csv\""
+      "commandLineArgs": "-g \"C:\\S\\Source (open source)\\NormalisedTraces\\Example Traces\\Good Traces\\*.csv\" -b \"C:\\S\\Source (open source)\\NormalisedTraces\\Example Traces\\Bad Traces\\*.csv\""
     }
   }
 }
