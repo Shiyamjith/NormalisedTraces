@@ -6,6 +6,9 @@ namespace NormaliseTrace
 {
     public class Options
     {
+        [Option('c', "columns", Group = "Options", Required = false, HelpText = "Number of columns to process in the data. Defaults to 504 columns.")]
+        public int Columns { get; set; }
+
         [Option('p', "percent", Group = "Options", Required = false, HelpText = "Percentage (1 to 99) of the data to keep. Defaults to keep centre 50% if not specified.")]
         public int PercentageToKeep { get; set; }
 

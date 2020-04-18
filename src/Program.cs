@@ -28,6 +28,9 @@ namespace NormaliseTrace
 
         static void RunOptions(Options o)
         {
+            if (o.Columns < 1)
+                o.Columns = 504; // default
+
             if (o.PercentageToKeep == 0)
                 o.PercentageToKeep = 50; // default
 
@@ -75,7 +78,7 @@ namespace NormaliseTrace
                 if (good != null)
                 {
                     var calculateDelta = new CalculateDelta();
-                    var delta = calculateDelta.Calculate(good, result);
+                    var delta = calculateDelta.Calculate(o.Columns, good.ToList(), result);
                     if(delta != null)
                         fileWriter.WriteDeltaFile(delta);
                 }

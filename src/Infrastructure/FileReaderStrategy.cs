@@ -35,6 +35,7 @@ namespace NormaliseTrace.Infrastructure
                         .Select(int.Parse)
                         .ToList())
                     .ToList();
+
                 return (true, data);
             }
             catch (Exception e)
