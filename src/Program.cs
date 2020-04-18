@@ -28,29 +28,9 @@ namespace NormaliseTrace
 
         static void RunOptions(Options o)
         {
-            if (o.Columns < 1)
-                o.Columns = 504; // default
-
-            if (o.PercentageToKeep == 0)
-                o.PercentageToKeep = 50; // default
-
-            if (o.PercentageToKeep < 1)
-                o.PercentageToKeep = 1;
-            
-            if (o.PercentageToKeep > 99)
-                o.PercentageToKeep = 99;
-
-            if(!o.TraceFiles.Any() && !string.IsNullOrWhiteSpace(o.OutputFolder))
-            {
-                HaveError = true;
+            ValidateOptions(o);
+            if(HaveError)
                 return;
-            }
-
-            if(o.TraceFiles.Any() && string.IsNullOrWhiteSpace(o.OutputFolder))
-            {
-                HaveError = true;
-                return;
-            }
 
             var fileReader = new FileReader(new FileReaderStrategy());
             var fileWriter = new FileWriter();
@@ -60,7 +40,7 @@ namespace NormaliseTrace
                 Console.WriteLine();
                 Console.WriteLine("Reading good trace files");
                 var data = fileReader.ParseFolders(o.GoodFiles);
-                var result = AverageColumns(data, o.PercentageToKeep);
+                var result = TraceHelper.AverageColumns(data, o.PercentageToKeep);
                 fileWriter.WriteGoodFile(result);
             }
 
@@ -69,7 +49,7 @@ namespace NormaliseTrace
                 Console.WriteLine();
                 Console.WriteLine("Reading bad trace files");
                 var data = fileReader.ParseFolders(o.BadFiles);
-                var result = AverageColumns(data, o.PercentageToKeep);
+                var result = TraceHelper.AverageColumns(data, o.PercentageToKeep);
                 fileWriter.WriteBadFile(result);
 
                 Console.WriteLine();
@@ -83,20 +63,35 @@ namespace NormaliseTrace
                         fileWriter.WriteDeltaFile(delta);
                 }
             }
+
+            if(o.TraceFiles.Any() && !string.IsNullOrEmpty(o.OutputFolder))
+            {
+                Console.WriteLine();
+                Console.WriteLine("Reading trace files");
+                var data = fileReader.ParseFolders(o.BadFiles);
+
+            }
         }
 
-        private static List<int> AverageColumns(List<List<int>> data, int percentageToKeep)
+        private static void ValidateOptions(Options o)
         {
-            Console.WriteLine($"Number of lines read in: {data.Count}");
-            var transposedData = TraceHelper.Transpose(data);
-            var result = new List<int>();
-            // Because the data has been rotated, we iterate the rows, which are in fact columns
-            foreach (var column in transposedData)
-            {
-                result.Add(TraceHelper.AverageCentre(column, percentageToKeep));
-            }
+            if (o.Columns < 1)
+                o.Columns = 504; // default
 
-            return result;
+            if (o.PercentageToKeep == 0)
+                o.PercentageToKeep = 50; // default
+
+            if (o.PercentageToKeep < 1)
+                o.PercentageToKeep = 1;
+
+            if (o.PercentageToKeep > 99)
+                o.PercentageToKeep = 99;
+
+            if (!o.TraceFiles.Any() && !string.IsNullOrWhiteSpace(o.OutputFolder))
+                HaveError = true;
+
+            if (o.TraceFiles.Any() && string.IsNullOrWhiteSpace(o.OutputFolder))
+                HaveError = true;
         }
 
         static void HandleParseError(IEnumerable<Error> errs)

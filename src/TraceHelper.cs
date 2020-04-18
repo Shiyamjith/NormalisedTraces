@@ -7,6 +7,20 @@ namespace NormaliseTrace
 {
     public static class TraceHelper
     {
+        public static List<int> AverageColumns(List<List<int>> data, int percentageToKeep)
+        {
+            Console.WriteLine($"Number of lines read in: {data.Count}");
+            var transposedData = Transpose(data);
+            var result = new List<int>();
+            // Because the data has been rotated, we iterate the rows, which are in fact columns
+            foreach (var column in transposedData)
+            {
+                result.Add(AverageCentre(column, percentageToKeep));
+            }
+
+            return result;
+        }
+
         // Rotate data array 90 degrees
         public static List<List<int>> Transpose(List<List<int>> data)
         {
