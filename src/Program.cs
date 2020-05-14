@@ -40,8 +40,8 @@ namespace NormaliseTrace
             {
                 Console.WriteLine();
                 Console.WriteLine("Reading good trace files");
-                var data = alphaFileReader.ParseFolders(o.GoodFiles);
-                var result = TraceHelper.AverageColumns(data, o.PercentageToKeep);
+                var data   = alphaFileReader.ParseFolders(o.GoodFiles);
+                var result = TraceProcessor.ProcessAlphaTrace(data, o.PercentageToKeep, o.Rise);
                 alphaFileWriter.WriteGoodFile(result);
             }
 
@@ -49,8 +49,8 @@ namespace NormaliseTrace
             {
                 Console.WriteLine();
                 Console.WriteLine("Reading bad trace files");
-                var data = alphaFileReader.ParseFolders(o.BadFiles);
-                var result = TraceHelper.AverageColumns(data, o.PercentageToKeep);
+                var data   = alphaFileReader.ParseFolders(o.BadFiles);
+                var result = TraceProcessor.ProcessAlphaTrace(data, o.PercentageToKeep, o.Rise);
                 alphaFileWriter.WriteBadFile(result);
 
                 Console.WriteLine();
@@ -59,7 +59,7 @@ namespace NormaliseTrace
                 if (good != null)
                 {
                     var calculateDelta = new CalculateDelta();
-                    var delta = calculateDelta.Calculate(o.Columns, good.ToList(), result);
+                    var delta = calculateDelta.Calculate(good.ToList(), result);
                     if(delta != null)
                         alphaFileWriter.WriteDeltaFile(delta);
                 }
@@ -70,15 +70,15 @@ namespace NormaliseTrace
                 Console.WriteLine();
                 Console.WriteLine("Reading trace files");
                 var delta            = alphaFileReader.ReadDeltaFile();
-                var processTraceFile = new ProcessTraceFile(fileReaderStrategy, o.Columns, delta);
+                var processTraceFile = new ProcessTraceFile(fileReaderStrategy, delta);
                 processTraceFile.Process(o.OutputFolder, o.TraceFiles);
             }
         }
 
         private static void ValidateOptions(Options o)
         {
-            if (o.Columns < 1)
-                o.Columns = 504; // default
+            if (o.Rise < 1)
+                o.Rise = 20;
 
             if (o.PercentageToKeep == 0)
                 o.PercentageToKeep = 50; // default

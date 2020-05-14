@@ -8,25 +8,16 @@ namespace NormaliseTrace.Application
     public class ProcessTraceFile
     {
         private readonly IReaderStrategy _reader;
-        private readonly int             _numColumns;
         private readonly List<double>    _delta;
 
-        public ProcessTraceFile(IReaderStrategy reader, int numColumns, List<double> delta)
+        public ProcessTraceFile(IReaderStrategy reader, List<double> delta)
         {
             _reader     = reader;
-            _numColumns = numColumns;
             _delta      = delta;
         }
 
         public void Process(string outputFolder, IEnumerable<string> directoryAndSearchPatterns)
         {
-            if(_delta.Count < _numColumns)
-            {
-                Console.WriteLine($"Invalid. Delta columns = {_delta.Count} and options.columns = {_numColumns}.");
-                Console.WriteLine("Too many columns specified. Cannot continue.");
-                return;
-            }
-
             Console.WriteLine("Reading trace files:");
             if (directoryAndSearchPatterns == null)
                 throw new ArgumentNullException(nameof(directoryAndSearchPatterns));
@@ -78,14 +69,9 @@ namespace NormaliseTrace.Application
             using var stream = new StreamWriter(outputFile, false);
             foreach (var row in inputData)
             {
-                if (row.Count < _numColumns)
-                {
-                    Console.WriteLine($"Invalid. File columns = {row.Count} and options.columns = {_numColumns}.");
-                    Console.WriteLine("Too many columns specified, or too few in file. Skipping file.");
-                    return;
-                }
+                var numColumns = Math.Min(row.Count, _delta.Count);
 
-                var adjusted = _delta.Take(_numColumns)
+                var adjusted = _delta.Take(numColumns)
                     .Select((delta, index) => (int) Math.Round(delta * row[index]))
                     .ToList();
 

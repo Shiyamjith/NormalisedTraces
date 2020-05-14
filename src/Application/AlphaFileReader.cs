@@ -60,7 +60,7 @@ namespace NormaliseTrace.Application
 
         public List<int> ReadGoodFile()
         {
-            var folder = TraceHelper.GetCurrentFolder();
+            var folder = TraceProcessor.GetCurrentFolder();
             var filename = Path.Combine(folder, Constants.GoodTraceFilename);
             var result = _reader.ReadInput(filename);
             if (!result.success)
@@ -74,7 +74,7 @@ namespace NormaliseTrace.Application
 
         public List<double> ReadDeltaFile()
         {
-            var folder   = TraceHelper.GetCurrentFolder();
+            var folder   = TraceProcessor.GetCurrentFolder();
             var filename = Path.Combine(folder, Constants.GoodTraceFilename);
 
             return File.ReadAllText(filename)

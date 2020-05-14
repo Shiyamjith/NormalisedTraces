@@ -26,7 +26,7 @@ namespace NormaliseTrace.Application
 
         private void DeleteFile(string filename)
         {
-            var folder = TraceHelper.GetCurrentFolder();
+            var folder = TraceProcessor.GetCurrentFolder();
             var file = Path.Combine(folder, filename);
             if(File.Exists(file))
                 File.Delete(file);
@@ -34,7 +34,7 @@ namespace NormaliseTrace.Application
 
         private void WriteFile<T>(string filename, List<T> data)
         {
-            var folder = TraceHelper.GetCurrentFolder();
+            var folder = TraceProcessor.GetCurrentFolder();
             var output = Path.Combine(folder, filename);
             Console.WriteLine($"output: {output}");
 
