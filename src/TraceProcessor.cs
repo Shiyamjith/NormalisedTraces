@@ -92,13 +92,11 @@ namespace NormaliseTrace
                 return data;
 
             // Take min column values from 20 columns back from rise column to find minimum steady state value
-            var steadyState = data.Skip(riseColumn - 20).Take(20).Min();
+            //var steadyState = data.Skip(riseColumn - 20).Take(20).Min();
+            //return data.Skip(riseColumn - 1).Select(x => x - steadyState).ToList();
 
-            // TODO: delete this line after showing Sham results
-            return data.Skip(riseColumn - 1).Select(x => x - steadyState).ToList();
-
-            // TODO: use this line in production as we need to calculate deltas with original data so the deltas are smaller
-            //return data.Skip(riseColumn - 1).ToList();
+            // Use this line in production as we need to calculate deltas with original data so the deltas are smaller
+            return data.Skip(riseColumn - 1).ToList();
         }
 
         // Find the column with a difference over the previous columns value by rise amount
