@@ -10,19 +10,18 @@ namespace NormaliseTrace
         public static List<int> ProcessAlphaTrace(List<List<int>> data, int percentageToKeep, int rise)
         {
             var result = AverageColumns(data, percentageToKeep);
-            return SetRiseLocationToZero(result, rise);
+            return SetRiseLocationToColumnZero(result, rise);
         }
 
         public static List<int> AverageColumns(List<List<int>> data, int percentageToKeep)
         {
             Console.WriteLine($"Number of lines read in: {data.Count}");
-            var transposedData = Transpose(data);
+
             var result = new List<int>();
-            // Because the data has been rotated, we iterate the rows, which are in fact columns
+            var transposedData = Transpose(data);
+            // Because the data has been transposed (rotated), we iterate the rows, which are in fact columns
             foreach (var column in transposedData)
-            {
                 result.Add(AverageCentre(column, percentageToKeep));
-            }
 
             return result;
         }
@@ -84,18 +83,19 @@ namespace NormaliseTrace
         }
 
         // This will take the point at which the trace sharply rises from it's steady state,
-        // and adjusts this to be 0,0
-        public static List<int> SetRiseLocationToZero(List<int> data, int rise)
+        // and adjusts this to be column 0
+        public static List<int> SetRiseLocationToColumnZero(List<int> data, int rise)
         {
+            const int window = 20;
             var riseColumn = FindRiseColumn(data, rise);
-            if (riseColumn < 20)
+            if (riseColumn < window)
                 return data;
 
-            // Take min column values from 20 columns back from rise column to find minimum steady state value
-            //var steadyState = data.Skip(riseColumn - 20).Take(20).Min();
-            //return data.Skip(riseColumn - 1).Select(x => x - steadyState).ToList();
+            // Take min column values from 'window' columns back from rise column to find minimum steady state value
+            var steadyState = (int) Math.Round(data.Skip(riseColumn - window).Take(window).Average());
 
             // Use this line in production as we need to calculate deltas with original data so the deltas are smaller
+            data[riseColumn - 1] = steadyState;
             return data.Skip(riseColumn - 1).ToList();
         }
 
@@ -113,6 +113,28 @@ namespace NormaliseTrace
             }
 
             return 0;
+        }
+
+        public static List<int> AdjustBadSteadyStateToGoodStateState(int goodSteadyState, List<int> bad)
+        {
+            // First value in graph is the steady state value
+            var badSteadyState = bad[0];
+            var adjustBadBy = goodSteadyState - badSteadyState;
+
+            return bad.Select(x => adjustBadBy + x).ToList();
+        }
+
+        // This class calculates the difference between the good and the bad alpha traces files.
+        public static List<double> CalculateDelta(List<int> good, List<int> bad)
+        {
+            if (good == null) throw new ArgumentNullException(nameof(good));
+            if (bad == null) throw new ArgumentNullException(nameof(bad));
+
+            var numColumns = Math.Min(good.Count, bad.Count);
+
+            return good.Take(numColumns)
+                .Select((goodValue, index) => goodValue / (double) (bad[index] == 0 ? goodValue : bad[index]))
+                .ToList();
         }
     }
 }

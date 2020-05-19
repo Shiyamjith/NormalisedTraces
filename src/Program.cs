@@ -50,16 +50,17 @@ namespace NormaliseTrace
                 Console.WriteLine();
                 Console.WriteLine("Reading bad trace files");
                 var data   = alphaFileReader.ParseFolders(o.BadFiles);
-                var result = TraceProcessor.ProcessAlphaTrace(data, o.PercentageToKeep, o.Rise);
-                alphaFileWriter.WriteBadFile(result);
+                var bad = TraceProcessor.ProcessAlphaTrace(data, o.PercentageToKeep, o.Rise);
 
                 Console.WriteLine();
                 Console.WriteLine("Read in good trace file to calculate delta");
                 var good = alphaFileReader.ReadGoodFile();
                 if (good != null)
                 {
-                    var calculateDelta = new CalculateDelta();
-                    var delta = calculateDelta.Calculate(good.ToList(), result);
+                    var adjustedBad = TraceProcessor.AdjustBadSteadyStateToGoodStateState(good[0], bad);
+                    alphaFileWriter.WriteBadFile(adjustedBad);
+
+                    var delta = TraceProcessor.CalculateDelta(good.ToList(), adjustedBad);
                     if(delta != null)
                         alphaFileWriter.WriteDeltaFile(delta);
                 }

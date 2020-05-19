@@ -9,21 +9,13 @@ namespace NormaliseTrace.Tests.Unit
     [TestFixture]
     public class CalculateDeltaTests
     {
-        private CalculateDelta _sut;
-
-        [SetUp]
-        public void SetUp()
-        {
-            _sut = new CalculateDelta();
-        }
-
         [Test]
         public void CalculateUsingNull()
         {
             // Act
-            Assert.Throws<ArgumentNullException>(() => _sut.Calculate(null, new List<int>()));
-            Assert.Throws<ArgumentNullException>(() => _sut.Calculate(new List<int>(), null));
-            Assert.Throws<ArgumentNullException>(() => _sut.Calculate(null, null));
+            Assert.Throws<ArgumentNullException>(() => TraceProcessor.CalculateDelta(null, new List<int>()));
+            Assert.Throws<ArgumentNullException>(() => TraceProcessor.CalculateDelta(new List<int>(), null));
+            Assert.Throws<ArgumentNullException>(() => TraceProcessor.CalculateDelta(null, null));
         }
 
         [Test]
@@ -31,7 +23,7 @@ namespace NormaliseTrace.Tests.Unit
         {
             var good = new List<int> { 1, 2, 3, 4 };
             var bad  = new List<int> { 5, 6 };
-            var result = _sut.Calculate(good, bad);
+            var result = TraceProcessor.CalculateDelta(good, bad);
             Assert.IsNotNull(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Count);
@@ -42,7 +34,7 @@ namespace NormaliseTrace.Tests.Unit
         {
             var good = new List<int> { 3000, 3000, 3000 };
             var bad  = new List<int> { 2900, 3000, 3111 };
-            var result = _sut.Calculate(good, bad);
+            var result = TraceProcessor.CalculateDelta(good, bad);
 
             Assert.NotNull(result);
             Assert.AreEqual(good.Count, result.Count);
@@ -56,7 +48,7 @@ namespace NormaliseTrace.Tests.Unit
         {
             var good = new List<int> { 3000, 3000, 3000 };
             var bad  = new List<int> { 2900, 3000, 3111 };
-            var result = _sut.Calculate(good, bad);
+            var result = TraceProcessor.CalculateDelta(good, bad);
 
             Assert.NotNull(result);
             Assert.AreEqual(good.Count, result.Count);
