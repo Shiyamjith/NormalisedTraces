@@ -6,6 +6,9 @@ namespace NormaliseTrace
 {
     public class Options
     {
+        //[Option('s', "smooth", Group = "Options", Required = false, HelpText = "If ringing/noise is seen in the graph, this value is used to smooth out a window of n values. Defaults to 0.")]
+        //public int Smooth { get; set; }
+
         [Option('r', "rise", Group = "Options", Required = false, HelpText = "Identity sharp rise in graph by looking for a difference of this much between two consecutive values in the data. Defaults to 20.")]
         public int Rise { get; set; }
 
