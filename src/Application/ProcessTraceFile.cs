@@ -9,11 +9,13 @@ namespace NormaliseTrace.Application
     {
         private readonly IReaderStrategy _reader;
         private readonly List<double>    _delta;
+        private readonly int             _rise;
 
-        public ProcessTraceFile(IReaderStrategy reader, List<double> delta)
+        public ProcessTraceFile(IReaderStrategy reader, List<double> delta, int rise)
         {
-            _reader     = reader;
-            _delta      = delta;
+            _reader = reader;
+            _delta  = delta;
+            _rise   = rise;
         }
 
         public void Process(string outputFolder, IEnumerable<string> directoryAndSearchPatterns)
@@ -69,10 +71,11 @@ namespace NormaliseTrace.Application
             using var stream = new StreamWriter(outputFile, false);
             foreach (var row in inputData)
             {
-                var numColumns = Math.Min(row.Count, _delta.Count);
+                var data       = TraceProcessor.SetRiseLocationToColumnZero(row, _rise);
+                var numColumns = Math.Min(data.Count, _delta.Count);
 
                 var adjusted = _delta.Take(numColumns)
-                    .Select((delta, index) => (int) Math.Round(delta * row[index]))
+                    .Select((delta, index) => (int) Math.Round(delta * data[index]))
                     .ToList();
 
                 stream.WriteLine(string.Join(',', adjusted));

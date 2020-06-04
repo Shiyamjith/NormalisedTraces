@@ -69,9 +69,11 @@ namespace NormaliseTrace
             if(o.TraceFiles.Any() && !string.IsNullOrEmpty(o.OutputFolder))
             {
                 Console.WriteLine();
+                Console.WriteLine("Reading delta file");
+                var delta = alphaFileReader.ReadDeltaFile();
+
                 Console.WriteLine("Reading trace files");
-                var delta            = alphaFileReader.ReadDeltaFile();
-                var processTraceFile = new ProcessTraceFile(fileReaderStrategy, delta);
+                var processTraceFile = new ProcessTraceFile(fileReaderStrategy, delta, o.Rise);
                 processTraceFile.Process(o.OutputFolder, o.TraceFiles);
             }
         }
