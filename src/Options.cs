@@ -21,10 +21,10 @@ namespace NormaliseTrace
         [Option('b', "bad", Group = "Options", Required = false, HelpText = "Reads in a bad alpha trace files and calculates a delta file to use to normalise traces. Ideally do this every day, or at least once a week.")]
         public IEnumerable<string> BadFiles { get; set; }
 
-        [Option('n', "normalise", SetName = "Normalise", Group = "Options", Required = false, HelpText = "The trace files to be normalised. Also specify the -o parameter.")]
+        [Option('n', "normalise", Group = "Options", Required = false, HelpText = "The trace files to be normalised. Also specify the -o parameter.")]
         public IEnumerable<string> TraceFiles { get; set; }
 
-        [Option('o', "output", SetName = "Normalise", Group = "Options", Required = false, HelpText = "The output folder to write the normalised traces. If an output file already exists, it will be overwritten.")]
+        [Option('o', "output", Group = "Options", Required = false, HelpText = "The output folder to write the normalised traces. If an output file already exists, it will be overwritten.")]
         public string OutputFolder { get; set; }
 
         [Usage(ApplicationAlias = "NormaliseTrace")]
