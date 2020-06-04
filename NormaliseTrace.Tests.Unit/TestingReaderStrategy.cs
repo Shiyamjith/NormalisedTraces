@@ -3,11 +3,11 @@ using NormaliseTrace.Application;
 
 namespace NormaliseTrace.Tests.Unit
 {
-    public class ListReaderStrategy : IReaderStrategy
+    public class TestingReaderStrategy : IReaderStrategy
     {
         private readonly List<List<int>> _data;
 
-        public ListReaderStrategy(List<List<int>> data)
+        public TestingReaderStrategy(List<List<int>> data)
         {
             _data = data;
         }
