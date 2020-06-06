@@ -92,7 +92,7 @@ namespace NormaliseTrace
                 return data;
 
             // Take min column values from 'window' columns back from rise column to find minimum steady state value
-            var steadyState = (int) Math.Round(data.Skip(riseColumn - window).Take(window).Average());
+            var steadyState = (int) Math.Round(data.Skip(riseColumn - window).Take(window - 5).Average());
 
             // Use this line in production as we need to calculate deltas with original data so the deltas are smaller
             data[riseColumn - 1] = steadyState;
