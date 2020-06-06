@@ -35,19 +35,19 @@ namespace NormaliseTrace.Application
                     var file  = directoryAndSearchPattern;
                     var input = _reader.ReadInput(file);
                     if (input.success)
-                        WriteTraceOutput(file, input.data);
+                        WriteTraceOutput(outputFolder, file, input.data);
                 }
                 else
                 {
                     var path          = Path.GetDirectoryName(directoryAndSearchPattern);
                     var searchPattern = Path.GetFileName(directoryAndSearchPattern);
                     var files         = Directory.EnumerateFiles(path, searchPattern);
-                    ReadFiles(files);
+                    ReadFiles(outputFolder, files);
                 }
             }
         }
 
-        public void ReadFiles(IEnumerable<string> files)
+        public void ReadFiles(string outputFolder, IEnumerable<string> files)
         {
             if (files == null)
                 throw new ArgumentNullException(nameof(files));
@@ -56,15 +56,14 @@ namespace NormaliseTrace.Application
             {
                 var input = _reader.ReadInput(file);
                 if (input.success)
-                    WriteTraceOutput(file, input.data);
+                    WriteTraceOutput(outputFolder, file, input.data);
             }
         }
 
-        private void WriteTraceOutput(string inputFile, List<List<int>> inputData)
+        private void WriteTraceOutput(string outputFolder, string inputFile, List<List<int>> inputData)
         {
-            var folder     = Path.GetDirectoryName(inputFile);
             var filename   = Path.GetFileName(inputFile);
-            var outputFile = Path.Combine(folder, filename);
+            var outputFile = Path.Combine(outputFolder, filename);
 
             Console.WriteLine($"Writing: {outputFile}");
 
